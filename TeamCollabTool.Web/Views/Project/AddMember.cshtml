@@ -1,0 +1,49 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Add Member";
+    var users = ViewBag.Users as List<TeamCollabTool.Data.Models.User>;
+    var projectId = (int)ViewBag.ProjectId;
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Add Member to Project</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddMember" method="post">
+                        <input type="hidden" name="id" value="@projectId" />
+                        <div class="form-group mb-3">
+                            <label for="userId">Select User</label>
+                            <select name="userId" class="form-control" required>
+                                <option value="">-- Select User --</option>
+                                @foreach (var user in users)
+                                {
+                                    <option value="@user.Id">@user.FullName (@user.Email)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="role">Role</label>
+                            <select name="role" class="form-control" required>
+                                <option value="Member">Member</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Member</button>
+                        <a asp-action="Details" asp-route-id="@projectId" class="btn btn-secondary">Back</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+}

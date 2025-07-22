@@ -1,0 +1,236 @@
+@model TeamCollabTool.Data.Models.Task
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<TeamCollabTool.Data.Models.User> UserManager
+@{
+    ViewData["Title"] = "Task Details";
+    var userId = UserManager.GetUserId(User);
+    var isMember = User.IsInRole("Member");
+    var isAssigned = Model.AssignedUserId == userId;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="mb-0">@Model.Title</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5>Description</h5>
+                        <p>@Model.Description</p>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Project</h5>
+                            <p>@Model.Project?.Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Status</h5>
+                            <span class="badge bg-@(Model.Status switch {
+                                "To Do" => "secondary",
+                                "In Progress" => "primary",
+                                "Done" => "success",
+                                _ => "secondary"
+                            })">@Model.Status</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Priority</h5>
+                            <span class="badge bg-@(Model.Priority switch {
+                                "Low" => "success",
+                                "Medium" => "warning",
+                                "High" => "danger",
+                                _ => "secondary"
+                            })">@Model.Priority</span>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Due Date</h5>
+                            <p>@Model.DueDate?.ToString("MMM dd, yyyy")</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Assigned To</h5>
+                            <p>@(Model.AssignedUser?.FullName ?? "Unassigned")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Created By</h5>
+                            <p>@Model.CreatedBy?.FullName</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Created Date</h5>
+                            <p>@Model.CreatedDate.ToString("MMM dd, yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Last Modified</h5>
+                            <p>@Model.LastModifiedDate.ToString("MMM dd, yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Activity Log</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.Activities != null && Model.Activities.Any())
+                    {
+                        <div class="timeline">
+                            @foreach (var activity in Model.Activities.OrderByDescending(a => a.Timestamp))
+                            {
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">@activity.Description</h6>
+                                        <small class="text-muted">
+                                            @activity.Timestamp.ToString("MMM dd, yyyy HH:mm") by @activity.User?.FullName
+                                        </small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No activity recorded yet.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3>Comments</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.Comments != null && Model.Comments.Any())
+                    {
+                        foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                        {
+                            <div class="mb-2">
+                                <strong>@comment.User?.FullName</strong> <small class="text-muted">@comment.CreatedAt.ToString("g")</small>
+                                <div>@comment.Content</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No comments yet.</p>
+                    }
+                    @if ((isMember || isAssigned))
+                    {
+                        <div class="card mt-4 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Add a Comment</h5>
+                            </div>
+                            <div class="card-body">
+                                <form asp-action="AddComment" method="post">
+                                    <input type="hidden" name="taskId" value="@Model.Id" />
+                                    <div class="form-group mb-2">
+                                        <textarea name="content" class="form-control" rows="2" placeholder="Add a comment..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">Add Comment</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (User.IsInRole("Member") && isAssigned)
+            {
+                <div class="card mt-4 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Update Task Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="UpdateStatus" method="post" class="mb-3">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select name="status" class="form-control" required>
+                                    <option value="To Do" selected="@(Model.Status == "To Do" ? "selected" : null)">To Do</option>
+                                    <option value="In Progress" selected="@(Model.Status == "In Progress" ? "selected" : null)">In Progress</option>
+                                    <option value="Done" selected="@(Model.Status == "Done" ? "selected" : null)">Done</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-outline-success btn-sm mt-2">Update Status</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="mb-0">Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit Task
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete Task
+                        </a>
+                        <a asp-controller="Project" asp-action="Details" asp-route-id="@Model.ProjectId" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Project
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <style>
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #007bff;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #007bff;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 12px;
+            height: calc(100% + 8px);
+            width: 2px;
+            background: #e9ecef;
+        }
+
+        .timeline-item:last-child:before {
+            display: none;
+        }
+    </style>
+}

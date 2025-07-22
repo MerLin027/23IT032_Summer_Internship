@@ -1,0 +1,134 @@
+@model IEnumerable<TeamCollabTool.Data.Models.Task>
+
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Tasks</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Task
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">To Do</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var task in Model.Where(t => t.Status == "To Do"))
+                    {
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6 class="card-title">@task.Title</h6>
+                                <p class="card-text small">@task.Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        @if (task.AssignedUser != null)
+                                        {
+                                            <span>Assigned to: @task.AssignedUser.FullName</span>
+                                        }
+                                    </small>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">In Progress</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var task in Model.Where(t => t.Status == "In Progress"))
+                    {
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6 class="card-title">@task.Title</h6>
+                                <p class="card-text small">@task.Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        @if (task.AssignedUser != null)
+                                        {
+                                            <span>Assigned to: @task.AssignedUser.FullName</span>
+                                        }
+                                    </small>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Done</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var task in Model.Where(t => t.Status == "Done"))
+                    {
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6 class="card-title">@task.Title</h6>
+                                <p class="card-text small">@task.Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        @if (task.AssignedUser != null)
+                                        {
+                                            <span>Assigned to: @task.AssignedUser.FullName</span>
+                                        }
+                                    </small>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+} 

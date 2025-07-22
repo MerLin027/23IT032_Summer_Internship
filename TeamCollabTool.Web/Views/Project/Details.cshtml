@@ -1,0 +1,153 @@
+@model TeamCollabTool.Data.Models.Project
+
+@{
+    ViewData["Title"] = "Project Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="mb-0">@Model.Name</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5>Description</h5>
+                        <p>@Model.Description</p>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Owner</h5>
+                            <p>@Model.Owner?.FullName</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Created Date</h5>
+                            <p>@Model.CreatedDate.ToString("MMM dd, yyyy")</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5>Team Members</h5>
+                        @if (Model.TeamMembers != null && Model.TeamMembers.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var member in Model.TeamMembers)
+                                {
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@member.User?.FullName</strong>
+                                            <small class="text-muted">@member.Role</small>
+                                        </div>
+                                        <small class="text-muted">Joined @member.JoinedDate.ToString("MMM dd, yyyy")</small>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No team members yet.</p>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        @if (User.IsInRole("Manager"))
+                        {
+                            <a asp-action="AddMember" asp-route-id="@Model.Id" class="btn btn-success mb-2">Add Team Member</a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Tasks</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6 class="text-secondary">To Do</h6>
+                            @foreach (var task in Model.Tasks?.Where(t => t.Status == "To Do") ?? Enumerable.Empty<TeamCollabTool.Data.Models.Task>())
+                            {
+                                <div class="card mb-2">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a asp-controller="Task" asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                        </h6>
+                                        <p class="card-text small">@task.Description</p>
+                                        <a asp-controller="Task" asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-primary">In Progress</h6>
+                            @foreach (var task in Model.Tasks?.Where(t => t.Status == "In Progress") ?? Enumerable.Empty<TeamCollabTool.Data.Models.Task>())
+                            {
+                                <div class="card mb-2">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a asp-controller="Task" asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                        </h6>
+                                        <p class="card-text small">@task.Description</p>
+                                        <a asp-controller="Task" asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-success">Done</h6>
+                            @foreach (var task in Model.Tasks?.Where(t => t.Status == "Done") ?? Enumerable.Empty<TeamCollabTool.Data.Models.Task>())
+                            {
+                                <div class="card mb-2">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a asp-controller="Task" asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                        </h6>
+                                        <p class="card-text small">@task.Description</p>
+                                        <a asp-controller="Task" asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="mb-0">Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        @if (Model.OwnerId == User.Identity.Name)
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit Project
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Delete Project
+                            </a>
+                        }
+                        <a asp-controller="Task" asp-action="Create" asp-route-projectId="@Model.Id" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Task
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+}

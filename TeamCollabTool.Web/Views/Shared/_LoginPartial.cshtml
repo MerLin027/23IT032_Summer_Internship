@@ -1,0 +1,11 @@
+@using Microsoft.AspNetCore.Identity
+@using TeamCollabTool.Data.Models
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@await Component.InvokeAsync("UserProfile")
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}
