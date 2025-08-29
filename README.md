@@ -1,50 +1,45 @@
-# 23IT032_Summer_Internship
-## Team Collaboration & Task Management System
+# TeamSync
 
-A web-based collaboration tool similar to Trello/ClickUp built with ASP.NET Core MVC and SQL Server.
+A modern web-based team collaboration and project management platform built with ASP.NET Core.
+
+## Overview
+
+TeamSync is a comprehensive project management solution that enables teams to organize projects, manage tasks, and collaborate effectively. The application provides an intuitive interface for tracking project progress and team activities.
 
 ## Features
 
-- User Authentication and Authorization
-- Project Board Management
-- Task Management with Kanban-style boards
-- Comments and Activity Logs
-- User Profile Management
-- Admin Dashboard
+- **Project Management**: Create and manage multiple projects with team collaboration
+- **Task Tracking**: Assign tasks with status tracking (To Do, In Progress, Done)
+- **User Management**: Role-based authentication and user profiles
+- **Activity Logging**: Track project and task activities
+- **Comments System**: Team communication on tasks and projects
+
+## Tech Stack
+
+- **Backend**: ASP.NET Core 8.0 MVC
+- **Database**: Entity Framework Core with SQL Server
+- **Authentication**: ASP.NET Core Identity
+- **Frontend**: Bootstrap, jQuery
 
 ## Prerequisites
 
-- .NET 7.0 SDK or later
-- SQL Server (Express edition is fine)
-- Visual Studio 2022 or Visual Studio Code
+- .NET 8.0 SDK
+- SQL Server (LocalDB/Express)
+- Visual Studio 2022 or VS Code
 
-## Getting Started
+## Quick Start
 
 1. Clone the repository
-2. Open the solution in Visual Studio
-3. Update the connection string in `appsettings.json`
-4. Run the following commands in Package Manager Console:
+2. Update connection string in `appsettings.json`
+3. Run database migrations:
    ```
    Update-Database
    ```
-5. Run the application
+4. Start the application
 
-## Project Structure
+## Project Architecture
 
-- **TeamCollabTool.Web**: Main web application project
-- **TeamCollabTool.Data**: Data access layer
+- **TeamCollabTool.Web**: MVC web application
+- **TeamCollabTool.Data**: Data models and DbContext
 - **TeamCollabTool.Services**: Business logic layer
-- **TeamCollabTool.Repositories**: Repository pattern implementation
-
-## Technologies Used
-
-- ASP.NET Core MVC
-- Entity Framework Core
-- SQL Server
-- Bootstrap 5
-- jQuery
-- Identity Framework
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- **TeamCollabTool.Repositories**: Data access patterns
